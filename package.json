@@ -1,8 +1,8 @@
 {
-  "author": "Josh David Miller",
-  "name": "ng-boilerplate",
-  "version": "0.3.0",
-  "homepage": "http://bit.ly/ng-boilerplate",
+  "author": "Sean Kenny",
+  "name": "appoyne.me",
+  "version": "0.0.6",
+  "homepage": "http://appoynt.me",
   "licenses": {
     "type": "MIT",
     "url": "https://raw.github.com/joshdmiller/ng-boilerplate/master/LICENSE"
@@ -12,7 +12,9 @@
     "type": "git",
     "url": "git@github.com:joshdmiller/ng-boilerplate.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "grunt-rev": "~0.1.0"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-recess": "~0.3.0",
@@ -25,8 +27,6 @@
     "grunt-karma": "~0.5.0",
     "grunt-ngmin": "0.0.2",
     "grunt-html2js": "~0.1.3",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-coffeelint": "0.0.6",
     "grunt-conventional-changelog": "~0.1.1",
     "grunt-bump": "0.0.6"
   }

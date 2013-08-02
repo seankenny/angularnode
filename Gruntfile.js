@@ -10,14 +10,13 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-conventional-changelog');
   grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-coffeelint');
   grunt.loadNpmTasks('grunt-recess');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-rev');
 
   /**
    * Load in our build configuration file.
@@ -34,22 +33,6 @@ module.exports = function ( grunt ) {
      * version. It's already there, so we don't repeat ourselves here.
      */
     pkg: grunt.file.readJSON("package.json"),
-
-    /**
-     * The banner is the comment that is placed at the top of our compiled 
-     * source files. It is first processed as a Grunt template, where the `<%=`
-     * pairs are evaluated based on this very configuration object.
-     */
-    meta: {
-      banner: 
-        '/**\n' +
-        ' * <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        ' * <%= pkg.homepage %>\n' +
-        ' *\n' +
-        ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
-        ' * Licensed <%= pkg.licenses.type %> <<%= pkg.licenses.url %>>\n' +
-        ' */\n'
-    },
 
     /**
      * Creates a changelog on a new version.
@@ -101,7 +84,7 @@ module.exports = function ( grunt ) {
       build_assets: {
         files: [
           { 
-            src: [ '**' ],
+            src: [ '**','!**/*.md' ],
             dest: '<%= build_dir %>/assets/',
             cwd: 'src/assets',
             expand: true
@@ -149,9 +132,6 @@ module.exports = function ( grunt ) {
        * code and all specified vendor source code into a single file.
        */
       compile_js: {
-        options: {
-          banner: '<%= meta.banner %>'
-        },
         src: [ 
           '<%= vendor_files.js %>', 
           'module.prefix', 
@@ -161,27 +141,7 @@ module.exports = function ( grunt ) {
           '<%= vendor_files.js %>', 
           'module.suffix' 
         ],
-        dest: '<%= compile_dir %>/assets/<%= pkg.name %>.js'
-      }
-    },
-
-    /**
-     * `grunt coffee` compiles the CoffeeScript sources. To work well with the
-     * rest of the build, we have a separate compilation task for sources and
-     * specs so they can go to different places. For example, we need the
-     * sources to live with the rest of the copied JavaScript so we can include
-     * it in the final build, but we don't want to include our specs there.
-     */
-    coffee: {
-      source: {
-        options: {
-          bare: true
-        },
-        expand: true,
-        cwd: '.',
-        src: [ '<%= app_files.coffee %>' ],
-        dest: '<%= build_dir %>',
-        ext: '.js'
+        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
 
@@ -207,9 +167,6 @@ module.exports = function ( grunt ) {
      */
     uglify: {
       compile: {
-        options: {
-          banner: '<%= meta.banner %>'
-        },
         files: {
           '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
         }
@@ -224,7 +181,7 @@ module.exports = function ( grunt ) {
     recess: {
       build: {
         src: [ '<%= app_files.less %>' ],
-        dest: '<%= build_dir %>/assets/<%= pkg.name %>.css',
+        dest: '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css',
         options: {
           compile: true,
           compress: false,
@@ -275,25 +232,7 @@ module.exports = function ( grunt ) {
       },
       globals: {}
     },
-
-    /**
-     * `coffeelint` does the same as `jshint`, but for CoffeeScript.
-     * CoffeeScript is not the default in ngBoilerplate, so we're just using
-     * the defaults here.
-     */
-    coffeelint: {
-      src: {
-        files: {
-          src: [ '<%= app_files.coffee %>' ]
-        }
-      },
-      test: {
-        files: {
-          src: [ '<%= app_files.coffeeunit %>' ]
-        }
-      }
-    },
-
+    
     /**
      * HTML2JS is a Grunt plugin that takes all of your template files and
      * places them into JavaScript files as strings that are added to
@@ -440,17 +379,6 @@ module.exports = function ( grunt ) {
       },
 
       /**
-       * When our CoffeeScript source files change, we want to run lint them and
-       * run our unit tests.
-       */
-      coffeesrc: {
-        files: [ 
-          '<%= app_files.coffee %>'
-        ],
-        tasks: [ 'coffeelint:src', 'coffee:source', 'karma:unit:run', 'copy:build_appjs' ]
-      },
-
-      /**
        * When assets are changed, copy them. Note that this will *not* copy new
        * files, so this is probably not very useful.
        */
@@ -500,19 +428,15 @@ module.exports = function ( grunt ) {
         options: {
           livereload: false
         }
-      },
-
-      /**
-       * When a CoffeeScript unit test file changes, we only want to lint it and
-       * run the unit tests. We don't want to do any live reloading.
-       */
-      coffeeunit: {
-        files: [
-          '<%= app_files.coffeeunit %>'
-        ],
-        tasks: [ 'coffeelint:test', 'karma:unit:run' ],
-        options: {
-          livereload: false
+      }
+    },
+    rev: {
+      dist: {
+        files: {
+          src: [
+            '<%= build_dir %>/**/{,*/}*.js',
+            '<%= build_dir %>/assest/{,*/}*.{png,jpg,jpeg,gif,webp,svg,css}'
+          ]
         }
       }
     }
@@ -531,25 +455,30 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'delta' ] );
 
   /**
-   * The default task is to build and compile.
+   * The default task is to bump the version, build and compile.
    */
-  grunt.registerTask( 'default', [ 'build', 'compile' ] );
+  grunt.registerTask( 'default', [ 'bump', 'build', 'compile' ] );
 
   /**
    * The `build` task gets your app ready to run for development and testing.
    */
   grunt.registerTask( 'build', [
-    'clean', 'html2js', 'jshint', 'coffeelint', 'coffee','recess:build',
-    'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs',
-    'index:build', 'karmaconfig', 'karma:continuous' 
+    'clean',
+    'html2js',
+    'jshint',
+    'recess:build',
+    'copy:build_assets',
+    'copy:build_appjs',
+    'copy:build_vendorjs',
+    'index:build' //, 'karmaconfig' , 'karma:continuous' 
   ]);
 
   /**
    * The `compile` task gets your app ready for deployment by concatenating and
    * minifying your code.
    */
-  grunt.registerTask( 'compile', [
-    'recess:compile', 'copy:compile_assets', 'ngmin', 'concat', 'uglify', 'index:compile'
+  grunt.registerTask( 'compile', ['recess:compile', 'copy:compile_assets', 'ngmin', 'concat', 
+    'uglify', 'index:compile'
   ]);
 
   /**
