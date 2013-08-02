@@ -1,27 +1,12 @@
-module.exports = function ( grunt ) {
-  
-  /** 
-   * Load required Grunt tasks. These are installed based on the versions listed
-   * in `package.json` when you do `npm install` in this directory.
-   */
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-conventional-changelog');
-  grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-recess');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-ngmin');
-  grunt.loadNpmTasks('grunt-html2js');
-  grunt.loadNpmTasks('grunt-rev');
+'use strict';
 
-  /**
-   * Load in our build configuration file.
-   */
-  var userConfig = require( './build.config.js' );
+module.exports = function ( grunt ) {
+
+  // load all grunt tasks
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+  // Load in our build configuration file.
+  var userConfig = require( './config/build.config.js' );
 
   /**
    * This is the configuration object Grunt uses to give each plugin its 
@@ -32,7 +17,7 @@ module.exports = function ( grunt ) {
      * We read in our `package.json` file so we can access the package name and
      * version. It's already there, so we don't repeat ourselves here.
      */
-    pkg: grunt.file.readJSON("package.json"),
+    pkg: grunt.file.readJSON('package.json'),
 
     /**
      * Creates a changelog on a new version.
@@ -50,14 +35,14 @@ module.exports = function ( grunt ) {
     bump: {
       options: {
         files: [
-          "package.json", 
-          "bower.json"
+          'package.json',
+          'bower.json'
         ],
         commit: false,
         commitMessage: 'chore(release): v%VERSION%',
         commitFiles: [
-          "package.json", 
-          "client/bower.json"
+          'package.json',
+          'client/bower.json'
         ],
         createTag: false,
         tagName: 'v%VERSION%',
@@ -65,14 +50,12 @@ module.exports = function ( grunt ) {
         push: false,
         pushTo: 'origin'
       }
-    },    
+    },
 
-    /**
-     * The directories to delete when `grunt clean` is executed.
-     */
-    clean: [ 
-      '<%= build_dir %>', 
-      '<%= compile_dir %>'
+    // The directories to delete when `grunt clean` is executed.
+    clean: [
+      '<%= buildDir %>',
+      '<%= compileDir %>'
     ],
 
     /**
@@ -81,94 +64,84 @@ module.exports = function ( grunt ) {
      * `build_dir`, and then to copy the assets to `compile_dir`.
      */
     copy: {
-      build_assets: {
+      buildAssets: {
         files: [
-          { 
+          {
             src: [ '**','!**/*.md' ],
-            dest: '<%= build_dir %>/assets/',
+            dest: '<%= buildDir %>/assets/',
             cwd: 'src/assets',
             expand: true
           }
-       ]   
+        ]
       },
-      build_appjs: {
+      buildAppjs: {
         files: [
           {
-            src: [ '<%= app_files.js %>' ],
-            dest: '<%= build_dir %>/',
+            src: [ '<%= appFiles.js %>' ],
+            dest: '<%= buildDir %>/',
             cwd: '.',
             expand: true
           }
         ]
       },
-      build_vendorjs: {
+      buildVendorjs: {
         files: [
           {
-            src: [ '<%= vendor_files.js %>' ],
-            dest: '<%= build_dir %>/',
+            src: [ '<%= vendorFiles.js %>' ],
+            dest: '<%= buildDir %>/',
             cwd: '.',
             expand: true
           }
         ]
       },
-      compile_assets: {
+      compileAssets: {
         files: [
           {
             src: [ '**' ],
-            dest: '<%= compile_dir %>/assets',
-            cwd: '<%= build_dir %>/assets',
+            dest: '<%= compileDir %>/assets',
+            cwd: '<%= buildDir %>/assets',
             expand: true
           }
         ]
       }
     },
 
-    /**
-     * `grunt concat` concatenates multiple source files into a single file.
-     */
+    // `grunt concat` concatenates multiple source files into a single file.
     concat: {
       /**
        * The `compile_js` target is the concatenation of our application source
        * code and all specified vendor source code into a single file.
        */
-      compile_js: {
-        src: [ 
-          '<%= vendor_files.js %>', 
-          'module.prefix', 
-          '<%= build_dir %>/src/**/*.js', 
-          '<%= html2js.app.dest %>', 
-          '<%= html2js.common.dest %>', 
-          '<%= vendor_files.js %>', 
-          'module.suffix' 
+      compilejs: {
+        src: [
+          '<%= vendorFiles.js %>',
+          'module.prefix',
+          '<%= buildDir %>/src/**/*.js',
+          '<%= html2js.app.dest %>',
+          '<%= html2js.common.dest %>',
+          '<%= vendorFiles.js %>',
+          'module.suffix'
         ],
-        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: '<%= compileDir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
-
-    /**
-     * `ng-min` annotates the sources before minifying. That is, it allows us
-     * to code without the array syntax.
-     */
     ngmin: {
       compile: {
         files: [
           {
-            src: [ '<%= app_files.js %>' ],
-            cwd: '<%= build_dir %>',
-            dest: '<%= build_dir %>',
+            src: [ '<%= appFiles.js %>' ],
+            cwd: '<%= buildDir %>',
+            dest: '<%= buildDir %>',
             expand: true
           }
         ]
       }
     },
-
-    /**
-     * Minify the sources!
-     */
+    // Minify the sources!
     uglify: {
       compile: {
         files: {
-          '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
+          '<%= concat.compilejs.dest %>': '<%= concat.compilejs.dest %>'
         }
       }
     },
@@ -180,8 +153,8 @@ module.exports = function ( grunt ) {
      */
     recess: {
       build: {
-        src: [ '<%= app_files.less %>' ],
-        dest: '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css',
+        src: [ '<%= appFiles.less %>' ],
+        dest: '<%= buildDir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css',
         options: {
           compile: true,
           compress: false,
@@ -212,27 +185,20 @@ module.exports = function ( grunt ) {
      * nonetheless inside `src/`.
      */
     jshint: {
-      src: [ 
-        '<%= app_files.js %>'
+      options: {
+        jshintrc: '.jshintrc'
+      },
+      src: [
+        '<%= appFiles.js %>'
       ],
       test: [
-        '<%= app_files.jsunit %>'
+        '<%= appFiles.jsunit %>'
       ],
       gruntfile: [
         'Gruntfile.js'
-      ],
-      options: {
-        curly: true,
-        immed: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        boss: true,
-        eqnull: true
-      },
-      globals: {}
+      ]
     },
-    
+
     /**
      * HTML2JS is a Grunt plugin that takes all of your template files and
      * places them into JavaScript files as strings that are added to
@@ -247,8 +213,8 @@ module.exports = function ( grunt ) {
         options: {
           base: 'src/app'
         },
-        src: [ '<%= app_files.atpl %>' ],
-        dest: '<%= build_dir %>/templates-app.js'
+        src: [ '<%= appFiles.atpl %>' ],
+        dest: '<%= buildDir %>/templates-app.js'
       },
 
       /**
@@ -258,8 +224,8 @@ module.exports = function ( grunt ) {
         options: {
           base: 'src/common'
         },
-        src: [ '<%= app_files.ctpl %>' ],
-        dest: '<%= build_dir %>/templates-common.js'
+        src: [ '<%= appFiles.ctpl %>' ],
+        dest: '<%= buildDir %>/templates-common.js'
       }
     },
 
@@ -268,7 +234,7 @@ module.exports = function ( grunt ) {
      */
     karma: {
       options: {
-        configFile: '<%= build_dir %>/karma-unit.js'
+        configFile: '<%= buildDir %>/karma-unit.js'
       },
       unit: {
         runnerPort: 9101,
@@ -292,13 +258,13 @@ module.exports = function ( grunt ) {
        * `src` property contains the list of included files.
        */
       build: {
-        dir: '<%= build_dir %>',
+        dir: '<%= buildDir %>',
         src: [
-          '<%= vendor_files.js %>',
-          '<%= build_dir %>/src/**/*.js',
+          '<%= vendorFiles.js %>',
+          '<%= buildDir %>/src/**/*.js',
           '<%= html2js.common.dest %>',
           '<%= html2js.app.dest %>',
-          '<%= vendor_files.css %>',
+          '<%= vendorFiles.css %>',
           '<%= recess.build.dest %>'
         ]
       },
@@ -309,10 +275,10 @@ module.exports = function ( grunt ) {
        * file. Now we're back!
        */
       compile: {
-        dir: '<%= compile_dir %>',
+        dir: '<%= compileDir %>',
         src: [
-          '<%= concat.compile_js.dest %>',
-          '<%= vendor_files.css %>',
+          '<%= concat.compilejs.dest %>',
+          '<%= vendorFiles.css %>',
           '<%= recess.compile.dest %>'
         ]
       }
@@ -324,9 +290,9 @@ module.exports = function ( grunt ) {
      */
     karmaconfig: {
       unit: {
-        dir: '<%= build_dir %>',
-        src: [ 
-          '<%= vendor_files.js %>',
+        dir: '<%= buildDir %>',
+        src: [
+          '<%= vendorFiles.js %>',
           '<%= html2js.app.dest %>',
           '<%= html2js.common.dest %>',
           'vendor/angular-mocks/angular-mocks.js'
@@ -372,10 +338,10 @@ module.exports = function ( grunt ) {
        * run our unit tests.
        */
       jssrc: {
-        files: [ 
-          '<%= app_files.js %>'
+        files: [
+          '<%= appFiles.js %>', 'server.js'
         ],
-        tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
+        tasks: [ 'jshint:src', 'karma:unit:run', 'copy:buildAppjs' ]
       },
 
       /**
@@ -383,17 +349,17 @@ module.exports = function ( grunt ) {
        * files, so this is probably not very useful.
        */
       assets: {
-        files: [ 
+        files: [
           'src/assets/**/*'
         ],
-        tasks: [ 'copy:build_assets' ]
+        tasks: [ 'copy:buildAssets' ]
       },
 
       /**
        * When index.html changes, we need to compile it.
        */
       html: {
-        files: [ '<%= app_files.html %>' ],
+        files: [ '<%= appFiles.html %>' ],
         tasks: [ 'index:build' ]
       },
 
@@ -401,9 +367,9 @@ module.exports = function ( grunt ) {
        * When our templates change, we only rewrite the template cache.
        */
       tpls: {
-        files: [ 
-          '<%= app_files.atpl %>', 
-          '<%= app_files.ctpl %>'
+        files: [
+          '<%= appFiles.atpl %>',
+          '<%= appFiles.ctpl %>'
         ],
         tasks: [ 'html2js' ]
       },
@@ -422,7 +388,7 @@ module.exports = function ( grunt ) {
        */
       jsunit: {
         files: [
-          '<%= app_files.jsunit %>'
+          '<%= appFiles.jsunit %>'
         ],
         tasks: [ 'jshint:test', 'karma:unit:run' ],
         options: {
@@ -434,8 +400,8 @@ module.exports = function ( grunt ) {
       dist: {
         files: {
           src: [
-            '<%= build_dir %>/**/{,*/}*.js',
-            '<%= build_dir %>/assest/{,*/}*.{png,jpg,jpeg,gif,webp,svg,css}'
+            '<%= buildDir %>/**/{,*/}*.js',
+            '<%= buildDir %>/assets/{,*/}*.{png,jpg,jpeg,gif,webp,svg,css}'
           ]
         }
       }
@@ -467,17 +433,17 @@ module.exports = function ( grunt ) {
     'html2js',
     'jshint',
     'recess:build',
-    'copy:build_assets',
-    'copy:build_appjs',
-    'copy:build_vendorjs',
-    'index:build', 'karmaconfig' , 'karma:continuous' 
+    'copy:buildAssets',
+    'copy:buildAppjs',
+    'copy:buildVendorjs',
+    'index:build' //, 'karmaconfig' , 'karma:continuous'
   ]);
 
   /**
    * The `compile` task gets your app ready for deployment by concatenating and
    * minifying your code.
    */
-  grunt.registerTask( 'compile', ['recess:compile', 'copy:compile_assets', 'ngmin', 'concat', 
+  grunt.registerTask( 'compile', ['recess:compile', 'copy:compileAssets', 'ngmin', 'concat',
     'uglify', 'index:compile'
   ]);
 
@@ -506,7 +472,7 @@ module.exports = function ( grunt ) {
    * compilation.
    */
   grunt.registerMultiTask( 'index', 'Process index.html template', function () {
-    var dirRE = new RegExp( '^('+grunt.config('build_dir')+'|'+grunt.config('compile_dir')+')\/', 'g' );
+    var dirRE = new RegExp( '^('+grunt.config('buildDir')+'|'+grunt.config('compileDir')+')\/', 'g' );
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
@@ -514,8 +480,8 @@ module.exports = function ( grunt ) {
       return file.replace( dirRE, '' );
     });
 
-    grunt.file.copy('src/index.html', this.data.dir + '/index.html', { 
-      process: function ( contents, path ) {
+    grunt.file.copy('src/index.html', this.data.dir + '/index.html', {
+      process: function ( contents ) {
         return grunt.template.process( contents, {
           data: {
             scripts: jsFiles,
@@ -534,9 +500,9 @@ module.exports = function ( grunt ) {
    */
   grunt.registerMultiTask( 'karmaconfig', 'Process karma config templates', function () {
     var jsFiles = filterForJS( this.filesSrc );
-    
-    grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
-      process: function ( contents, path ) {
+
+    grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'buildDir' ) + '/karma-unit.js', {
+      process: function ( contents ) {
         return grunt.template.process( contents, {
           data: {
             scripts: jsFiles
@@ -545,5 +511,4 @@ module.exports = function ( grunt ) {
       }
     });
   });
-
 };

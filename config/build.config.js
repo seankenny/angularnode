@@ -7,8 +7,8 @@ module.exports = {
    * development and the `compile_dir` folder is where our app resides once it's
    * completely built.
    */
-  build_dir: 'build',
-  compile_dir: 'bin',
+  buildDir: 'build',
+  compileDir: 'bin',
 
   /**
    * This is a collection of file patterns that refer to our app code (the
@@ -19,7 +19,7 @@ module.exports = {
    * main HTML file, `less` is our main stylesheet, and `unit` contains our
    * app's unit tests.
    */
-  app_files: {
+  appFiles: {
     js: [ 'src/**/*.js', '!src/**/*.spec.js' ],
     jsunit: [ 'src/**/*.spec.js' ],
     
@@ -44,7 +44,7 @@ module.exports = {
    * The `vendor_files.css` property holds any CSS files to be automatically
    * included in our app.
    */
-  vendor_files: {
+  vendorFiles: {
     js: [
       'vendor/angular/angular.js',
       'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',

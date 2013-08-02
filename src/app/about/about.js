@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module( 'ngBoilerplate.about', [
   'ui.state',
   'placeholders',
@@ -9,7 +11,7 @@ angular.module( 'ngBoilerplate.about', [
   $stateProvider.state( 'about', {
     url: '/about',
     views: {
-      "main": {
+      'main': {
         controller: 'AboutCtrl',
         templateUrl: 'about/about.tpl.html'
       }
@@ -19,13 +21,11 @@ angular.module( 'ngBoilerplate.about', [
 
 .controller( 'AboutCtrl', function AboutCtrl( $scope, titleService ) {
   titleService.setTitle( 'What is It?' );
-  
+
   // This is simple a demo for UI Boostrap.
   $scope.dropdownDemoItems = [
-    "The first choice!",
-    "And another choice for you.",
-    "but wait! A third!"
+    'The first choice!',
+    'And another choice for you.',
+    'but wait! A third!'
   ];
-})
-
-;
+});

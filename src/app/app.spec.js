@@ -1,11 +1,13 @@
+'use strict';
+
 describe( 'AppCtrl', function() {
   describe( 'isCurrentUrl', function() {
     var AppCtrl, $location, $scope;
 
     beforeEach( module( 'ngBoilerplate' ) );
 
-    beforeEach( inject( function( $controller, _$location_, $rootScope ) {
-      $location = _$location_;
+    beforeEach( inject( function( $controller, location, $rootScope ) {
+      $location = location;
       $scope = $rootScope.$new();
       AppCtrl = $controller( 'AppCtrl', { $location: $location, $scope: $scope });
     }));

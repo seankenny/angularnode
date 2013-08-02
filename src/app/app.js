@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module( 'ngBoilerplate', [
   'templates-app',
   'templates-common',
@@ -15,8 +17,7 @@ angular.module( 'ngBoilerplate', [
   titleService.setSuffix( ' | ngBoilerplate' );
 })
 
-.controller( 'AppCtrl', function AppCtrl ( $scope, $location ) {
+.controller( 'AppCtrl', function AppCtrl ( ) {
 })
 
 ;
-
