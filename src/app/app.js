@@ -13,9 +13,9 @@ angular.module( 'ngBoilerplate', [
   $urlRouterProvider.otherwise( '/home' );
 })
 
-.run( function run ( titleService ) {
-  titleService.setSuffix( ' | ngBoilerplate' );
-})
+// .run( function run ( titleService ) {
+//   titleService.setSuffix( ' | ngBoilerplate' );
+// })
 
 .controller( 'AppCtrl', function AppCtrl ( ) {
 })

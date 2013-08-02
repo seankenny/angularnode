@@ -14,9 +14,9 @@
  * specified, as shown below.
  */
 angular.module( 'ngBoilerplate.home', [
-  'ui.state',
-  'titleService',
-  'plusOne'
+  'ui.state'//,
+  // 'titleService',
+  //  'plusOne'
 ])
 
 /**
@@ -39,8 +39,8 @@ angular.module( 'ngBoilerplate.home', [
 /**
  * And of course we define a controller for our route.
  */
-.controller( 'HomeCtrl', function HomeController( $scope, titleService ) {
-  titleService.setTitle( 'Home' );
+.controller( 'HomeCtrl', function HomeController(  ) {
+  //titleService.setTitle( 'Home' );
 })
 
 ;
