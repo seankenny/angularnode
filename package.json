@@ -1,16 +1,16 @@
 {
   "author": "Sean Kenny",
   "name": "appoyne.me",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "homepage": "http://appoynt.me",
   "licenses": {
     "type": "MIT",
     "url": "https://raw.github.com/joshdmiller/ng-boilerplate/master/LICENSE"
   },
-  "bugs": "https://github.com/joshdmiller/ng-boilerplate/issues",
+  "bugs": "https://github.com/seankenny/angular/issues",
   "repository": {
     "type": "git",
-    "url": "git@github.com:joshdmiller/ng-boilerplate.git"
+    "url": "https://github.com/seankenny/angular"
   },
   "dependencies": {
     "grunt-rev": "~0.1.0"

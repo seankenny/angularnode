@@ -470,7 +470,7 @@ module.exports = function ( grunt ) {
     'copy:build_assets',
     'copy:build_appjs',
     'copy:build_vendorjs',
-    'index:build' //, 'karmaconfig' , 'karma:continuous' 
+    'index:build', 'karmaconfig' , 'karma:continuous' 
   ]);
 
   /**
