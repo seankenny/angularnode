@@ -3,10 +3,10 @@ module.exports = function(app, passport, io, config) {
   //require('./portal')(app, passport, io);
 
   // public
-  app.get('/', function(req, res){
-    //res.render('brochure/index'); 
-    res.render('index.html'); 
-  });
+  // app.get('/', function(req, res){
+  //   //res.render('brochure/index'); 
+  //   res.sendfile('index.html', { root: config.deployPath });
+  // });
 
   app.get('/aboutus', function(req, res){
     res.render('brochure/about'); 
@@ -16,6 +16,6 @@ module.exports = function(app, passport, io, config) {
   app.all('/*', function(req, res) {
     console.log('here: '+ req.url);
     // Just send the index.html for other files to support HTML5Mode
-    res.sendfile('index.html', { root: config.rootPath });
+    res.sendfile('index.html', { root: config.deployPath });
   });
 };

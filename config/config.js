@@ -1,7 +1,5 @@
 var path = require('path')
-  , rootPath = path.normalize(__dirname + '/../build/')
-  , staticPath = rootPath + '/vendor'
-  , staticUrl = '/vendor';
+  , appRoot = path.normalize(__dirname + '/../');
 
 module.exports = {
   development: {
@@ -10,18 +8,7 @@ module.exports = {
     session: {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
-    rootPath: rootPath,
-    staticPath: staticPath,
-    staticUrl: staticUrl,
-    //notifier: notifier,
-    // app: {
-    //   name: 'Nodejs Express Mongoose Demo'
-    // },
-    // twitter: {
-    //   consumerKey = 'OoS4aVvIuCrcjJps0VUw',
-    //   consumerSecret =  'VITr9mZvbb2OVge02vNAzSgHvSg6LGkHnZMad4vUJH0',
-    //   callbackURL =  'http://appoynt.me.io/auth/twitter/callback'
-    // }
+    deployPath: appRoot + 'build'
   },
   production: {
     db: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL,
@@ -29,18 +16,7 @@ module.exports = {
     session: {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
-    rootPath: rootPath,
-    staticPath: staticPath,
-    staticUrl: staticUrl,
+    deployPath: appRoot + 'bin',
     longPolling: true
-    //notifier: notifier,
-    // app: {
-    //   name: 'Nodejs Express Mongoose Demo'
-    // },
-    // twitter: {
-    //   consumerKey = 'OoS4aVvIuCrcjJps0VUw',
-    //   consumerSecret =  'VITr9mZvbb2OVge02vNAzSgHvSg6LGkHnZMad4vUJH0',
-    //   callbackURL =  'http://appoynt.me.io/auth/twitter/callback'
-    // }
-  },
+  }
 }

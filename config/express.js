@@ -9,19 +9,16 @@ module.exports = function(app, passport, config){
     
     // First looks for a static file: index.html, css, images, etc.
     app.use(express.compress());
-    app.use('/vendor', express.static(config.staticPath));
-    app.use('/src', express.static(config.rootPath + '/src'));
-    app.use('/', express.static(config.rootPath));
-    app.use('/vendor', function(req, res, next) {
-      res.send(404); // If we get here then the request for a static file is invalid
-    });
-    app.use('/src', function(req, res, next) {
-        console.log('xxx:' + config.rootPath + '/src');
-      res.send(404); // If we get here then the request for a static file is invalid
-    });
 
-//    app.set('port', process.env.PORT || 3000);
-//    app.set('views', config.rootPath);
+    app.use('/vendor', express.static(config.deployPath + '/vendor'));
+    app.use('/src', express.static(config.deployPath + '/src'));
+    app.use('/', express.static(config.deployPath));
+    app.use(['/vendor'], function(req, res, next) {
+      res.send(404); // If we get here then the request for a static file is invalid
+    });
+    app.use(['/src'], function(req, res, next) {
+      res.send(404); // If we get here then the request for a static file is invalid
+    });
  
     app.use(express.logger());
 
@@ -35,7 +32,6 @@ module.exports = function(app, passport, config){
     //auth setup
     app.use(passport.initialize());
     app.use(passport.session());
-
     
     // csrf set up
     // app.use(express.csrf({value: csrfValue}));
@@ -48,19 +44,10 @@ module.exports = function(app, passport, config){
     // app.use(csrf.checkCsrf);
     // app.use(csrf.addCsrf);
 
-//    app.use(express.static(path.join(config.rootPath, 'vendor')));
-
-    //app.use(app.router);
-
-    
-    //app.engine('html', require('ejs').renderFile);
-
-
   });
 
   // development only
   app.configure('development', function(){
     app.use(express.errorHandler({showStack: true, dumpExceptions: true}));
   });
-
 }

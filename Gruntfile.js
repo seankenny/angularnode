@@ -12,7 +12,7 @@ module.exports = function ( grunt ) {
   };
 
   try {
-    pkgConfig.app = require('./package.json').appPath || pkgConfig.app;
+    pkgConfig = require('./package.json') || pkgConfig;
   } catch (e) {}
 
   grunt.initConfig({
