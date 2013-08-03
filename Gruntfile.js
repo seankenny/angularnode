@@ -5,33 +5,41 @@ module.exports = function ( grunt ) {
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-  // Load in our build configuration file.
-  var userConfig = require( './config/build.config.js' );
+  // configurable paths
+  var pkgConfig = {
+    app: 'app',
+    dist: 'dist'
+  };
 
-  /**
-   * This is the configuration object Grunt uses to give each plugin its 
-   * instructions.
-   */
-  var taskConfig = {
-    /**
-     * We read in our `package.json` file so we can access the package name and
-     * version. It's already there, so we don't repeat ourselves here.
-     */
-    pkg: grunt.file.readJSON('package.json'),
+  try {
+    pkgConfig.app = require('./package.json').appPath || pkgConfig.app;
+  } catch (e) {}
 
-    /**
-     * Creates a changelog on a new version.
-     */
-    changelog: {
-      options: {
-        dest: 'CHANGELOG.md',
-        template: 'changelog.tpl'
-      }
+  grunt.initConfig({
+    pkg: pkgConfig,
+    buildDir: 'build',
+    compileDir: 'bin',
+    appFiles: {
+      js: [ 'src/**/*.js', '!src/**/*.spec.js' ],
+      jsunit: [ 'src/**/*.spec.js' ],
+      atpl: [ 'src/app/**/*.tpl.html' ],
+      ctpl: [ 'src/common/**/*.tpl.html' ],
+      html: [ 'src/index.html' ],
+      less: 'src/less/main.less'
+      //server: [ './server.js, routes/**/*.js', 'config/*.js' ]
     },
-
-    /**
-     * Increments the version number, etc.
-     */
+    vendorFiles: {
+      js: [
+        'vendor/angular/angular.js',
+        'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
+        'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
+        'vendor/angular-ui-router/release/angular-ui-router.js',
+        'vendor/angular-ui-utils/modules/route/route.js'
+      ],
+      css: [
+      ]
+    },
+    // REPLACE WITH REV
     bump: {
       options: {
         files: [
@@ -51,18 +59,10 @@ module.exports = function ( grunt ) {
         pushTo: 'origin'
       }
     },
-
-    // The directories to delete when `grunt clean` is executed.
     clean: [
       '<%= buildDir %>',
       '<%= compileDir %>'
     ],
-
-    /**
-     * The `copy` task just copies files from A to B. We use it here to copy
-     * our project assets (images, fonts, etc.) and javascripts into
-     * `build_dir`, and then to copy the assets to `compile_dir`.
-     */
     copy: {
       buildAssets: {
         files: [
@@ -105,13 +105,7 @@ module.exports = function ( grunt ) {
         ]
       }
     },
-
-    // `grunt concat` concatenates multiple source files into a single file.
     concat: {
-      /**
-       * The `compile_js` target is the concatenation of our application source
-       * code and all specified vendor source code into a single file.
-       */
       compilejs: {
         src: [
           '<%= vendorFiles.js %>',
@@ -137,7 +131,6 @@ module.exports = function ( grunt ) {
         ]
       }
     },
-    // Minify the sources!
     uglify: {
       compile: {
         files: {
@@ -145,12 +138,7 @@ module.exports = function ( grunt ) {
         }
       }
     },
-
-    /**
-     * `recess` handles our LESS compilation and uglification automatically.
-     * Only our `main.less` file is included in compilation; all other files
-     * must be imported from this file.
-     */
+    // `recess` handles our LESS compilation and uglification automatically.
     recess: {
       build: {
         src: [ '<%= appFiles.less %>' ],
@@ -175,15 +163,6 @@ module.exports = function ( grunt ) {
         }
       }
     },
-
-    /**
-     * `jshint` defines the rules of our linter as well as which files we
-     * should check. This file, all javascript sources, and all our unit tests
-     * are linted based on the policies listed in `options`. But we can also
-     * specify exclusionary patterns by prefixing them with an exclamation
-     * point (!); this is useful when code comes from a third party but is
-     * nonetheless inside `src/`.
-     */
     jshint: {
       options: {
         jshintrc: '.jshintrc'
@@ -198,17 +177,8 @@ module.exports = function ( grunt ) {
         'Gruntfile.js'
       ]
     },
-
-    /**
-     * HTML2JS is a Grunt plugin that takes all of your template files and
-     * places them into JavaScript files as strings that are added to
-     * AngularJS's template cache. This means that the templates too become
-     * part of the initial payload as one JavaScript file. Neat!
-     */
+    // takes all of template files and places them into JavaScript files as strings that are added to AngularJS's template cache. 
     html2js: {
-      /**
-       * These are the templates from `src/app`.
-       */
       app: {
         options: {
           base: 'src/app'
@@ -216,10 +186,6 @@ module.exports = function ( grunt ) {
         src: [ '<%= appFiles.atpl %>' ],
         dest: '<%= buildDir %>/templates-app.js'
       },
-
-      /**
-       * These are the templates from `src/common`.
-       */
       common: {
         options: {
           base: 'src/common'
@@ -228,10 +194,6 @@ module.exports = function ( grunt ) {
         dest: '<%= buildDir %>/templates-common.js'
       }
     },
-
-    /**
-     * The Karma configurations.
-     */
     karma: {
       options: {
         configFile: '<%= buildDir %>/karma-unit.js'
@@ -244,13 +206,8 @@ module.exports = function ( grunt ) {
         singleRun: true
       }
     },
-
-    /**
-     * The `index` task compiles the `index.html` file as a Grunt template. CSS
-     * and JS files co-exist here but they get split apart later.
-     */
+    // compiles the `index.html` file as a Grunt template. CSS and JS files co-exist here but they get split apart later.
     index: {
-
       /**
        * During development, we don't want to have wait for compilation,
        * concatenation, minification, etc. So to avoid these steps, we simply
@@ -268,7 +225,6 @@ module.exports = function ( grunt ) {
           '<%= recess.build.dest %>'
         ]
       },
-
       /**
        * When it is time to have a completely compiled application, we can
        * alter the above to include only a single JavaScript and a single CSS
@@ -283,7 +239,6 @@ module.exports = function ( grunt ) {
         ]
       }
     },
-
     /**
      * This task compiles the karma template so that changes to its file array
      * don't have to be managed manually.
@@ -320,7 +275,9 @@ module.exports = function ( grunt ) {
       options: {
         livereload: true
       },
-
+      server: {
+        files: [ 'routes/**/*.js', 'config/*.js' ]
+      },
       /**
        * When the Gruntfile changes, we just want to lint it. In fact, when
        * your Gruntfile changes, it will automatically be reloaded!
@@ -405,47 +362,18 @@ module.exports = function ( grunt ) {
           ]
         }
       }
+    },
+    express: {
+      options: {
+        // Override defaults here
+      },
+      dev: {
+        options: {
+          script: './server.js'
+        }
+      }
     }
-  };
-
-  grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
-
-  /**
-   * In order to make it safe to just compile or copy *only* what was changed,
-   * we need to ensure we are starting from a clean, fresh build. So we rename
-   * the `watch` task to `delta` (that's why the configuration var above is
-   * `delta`) and then add a new task called `watch` that does a clean build
-   * before watching for changes.
-   */
-  grunt.renameTask( 'watch', 'delta' );
-  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'delta' ] );
-
-  /**
-   * The default task is to bump the version, build and compile.
-   */
-  grunt.registerTask( 'default', [ 'bump', 'build', 'compile' ] );
-
-  /**
-   * The `build` task gets your app ready to run for development and testing.
-   */
-  grunt.registerTask( 'build', [
-    'clean',
-    'html2js',
-    'jshint',
-    'recess:build',
-    'copy:buildAssets',
-    'copy:buildAppjs',
-    'copy:buildVendorjs',
-    'index:build' //, 'karmaconfig' , 'karma:continuous'
-  ]);
-
-  /**
-   * The `compile` task gets your app ready for deployment by concatenating and
-   * minifying your code.
-   */
-  grunt.registerTask( 'compile', ['recess:compile', 'copy:compileAssets', 'ngmin', 'concat',
-    'uglify', 'index:compile'
-  ]);
+  });
 
   /**
    * A utility function to get all app JavaScript sources.
@@ -511,4 +439,47 @@ module.exports = function ( grunt ) {
       }
     });
   });
+
+    /**
+   * In order to make it safe to just compile or copy *only* what was changed,
+   * we need to ensure we are starting from a clean, fresh build. So we rename
+   * the `watch` task to `delta` (that's why the configuration var above is
+   * `delta`) and then add a new task called `watch` that does a clean build
+   * before watching for changes.
+   */
+  grunt.renameTask( 'watch', 'delta' );
+  grunt.registerTask( 'watch', [ 'build', 'karma:unit', 'delta' ] );
+
+  /**
+   * The default task is to bump the version, build and compile.
+   */
+  grunt.registerTask( 'default', [ 'bump', 'build', 'compile' ] );
+
+  /**
+   * The `build` task gets your app ready to run for development and testing.
+   */
+  grunt.registerTask( 'build', [
+    'clean',
+    'html2js',
+    'jshint',
+    'recess:build',
+    'copy:buildAssets',
+    'copy:buildAppjs',
+    'copy:buildVendorjs',
+    'index:build' //, 'karmaconfig' , 'karma:continuous'
+  ]);
+
+  /**
+   * The `compile` task gets your app ready for deployment by concatenating and
+   * minifying your code.
+   */
+  grunt.registerTask( 'compile', ['recess:compile', 'copy:compileAssets', 'ngmin', 'concat',
+    'uglify', 'index:compile'
+  ]);
+
+  grunt.registerTask( 'server', [
+    'build',
+    'express:dev',
+    'watch'
+  ]);
 };
