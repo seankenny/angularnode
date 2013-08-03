@@ -1,5 +1,7 @@
 var path = require('path')
-  , rootPath = path.normalize(__dirname + '/..');
+  , rootPath = path.normalize(__dirname + '/../build/')
+  , staticPath = rootPath + '/vendor'
+  , staticUrl = '/vendor';
 
 module.exports = {
   development: {
@@ -8,7 +10,9 @@ module.exports = {
     session: {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
-    root: rootPath
+    rootPath: rootPath,
+    staticPath: staticPath,
+    staticUrl: staticUrl,
     //notifier: notifier,
     // app: {
     //   name: 'Nodejs Express Mongoose Demo'
@@ -25,7 +29,9 @@ module.exports = {
     session: {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
-    root: rootPath,
+    rootPath: rootPath,
+    staticPath: staticPath,
+    staticUrl: staticUrl,
     longPolling: true
     //notifier: notifier,
     // app: {

@@ -5,10 +5,28 @@ var express = require('express')
 module.exports = function(app, passport, config){
 
   app.configure(function(){
-    app.set('port', process.env.PORT || 3000);
-    app.set('views', config.root + '/build');
-    // app.set('views', config.root + '/views');
-    //app.set('view engine', 'jade');
+    app.use(express.favicon());
+    
+    // First looks for a static file: index.html, css, images, etc.
+    app.use(express.compress());
+    app.use('/vendor', express.static(config.staticPath));
+    app.use('/src', express.static(config.rootPath + '/src'));
+    app.use('/', express.static(config.rootPath));
+    app.use('/vendor', function(req, res, next) {
+      res.send(404); // If we get here then the request for a static file is invalid
+    });
+    app.use('/src', function(req, res, next) {
+        console.log('xxx:' + config.rootPath + '/src');
+      res.send(404); // If we get here then the request for a static file is invalid
+    });
+
+//    app.set('port', process.env.PORT || 3000);
+//    app.set('views', config.rootPath);
+ 
+    app.use(express.logger());
+
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
 
     app.use(express.cookieParser());                                   // required for CSRF
     app.use(express.cookieSession(config.session)); // session storage via cookie
@@ -18,10 +36,7 @@ module.exports = function(app, passport, config){
     app.use(passport.initialize());
     app.use(passport.session());
 
-    app.use(express.favicon());
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-
+    
     // csrf set up
     // app.use(express.csrf({value: csrfValue}));
     // app.use(function(req, res, next){
@@ -33,12 +48,14 @@ module.exports = function(app, passport, config){
     // app.use(csrf.checkCsrf);
     // app.use(csrf.addCsrf);
 
-    app.use(express.compress());
-    app.use(app.router);
-    app.use(express.static(path.join(config.root, 'build')));
+//    app.use(express.static(path.join(config.rootPath, 'vendor')));
 
-    app.use(express.logger());
-    app.engine('html', require('ejs').renderFile);
+    //app.use(app.router);
+
+    
+    //app.engine('html', require('ejs').renderFile);
+
+
   });
 
   // development only
