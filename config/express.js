@@ -6,20 +6,24 @@ module.exports = function(app, passport, config){
 
   app.configure(function(){
     app.use(express.favicon());
-    
-    // First looks for a static file: index.html, css, images, etc.
     app.use(express.compress());
 
+    // static
     app.use('/vendor', express.static(config.deployPath + '/vendor'));
     app.use('/src', express.static(config.deployPath + '/src'));
+    app.use('/assets', express.static(config.deployPath + '/assets'));
     app.use('/', express.static(config.deployPath));
-    app.use(['/vendor'], function(req, res, next) {
-      res.send(404); // If we get here then the request for a static file is invalid
+    //If we get here then the request for a static file is invalid
+    app.use('/vendor', function(req, res, next) {
+      res.send(404); 
     });
-    app.use(['/src'], function(req, res, next) {
-      res.send(404); // If we get here then the request for a static file is invalid
+    app.use('/src', function(req, res, next) {
+      res.send(404);
     });
- 
+    app.use('/assets', function(req, res, next) {
+      res.send(404);
+    });
+
     app.use(express.logger());
 
     app.use(express.bodyParser());
@@ -43,7 +47,6 @@ module.exports = function(app, passport, config){
 
     // app.use(csrf.checkCsrf);
     // app.use(csrf.addCsrf);
-
   });
 
   // development only

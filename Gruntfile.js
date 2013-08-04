@@ -184,14 +184,14 @@ module.exports = function ( grunt ) {
           base: 'src/app'
         },
         src: [ '<%= appFiles.atpl %>' ],
-        dest: '<%= buildDir %>/templates-app.js'
+        dest: '<%= buildDir %>/assets/templates-app.js'
       },
       common: {
         options: {
           base: 'src/common'
         },
         src: [ '<%= appFiles.ctpl %>' ],
-        dest: '<%= buildDir %>/templates-common.js'
+        dest: '<%= buildDir %>/assets/templates-common.js'
       }
     },
     karma: {
