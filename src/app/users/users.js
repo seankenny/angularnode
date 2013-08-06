@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module( 'ngBoilerplate.home', [
+angular.module( 'ngBoilerplate.users', [
   'ui.state'//, 
   // 'titleService',
   //  'plusOne'

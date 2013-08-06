@@ -5,6 +5,10 @@ angular.module( 'ngBoilerplate', [
   'templates-common',
   'ngBoilerplate.home',
   'ngBoilerplate.about',
+  'ngBoilerplate.signup',
+  'ngBoilerplate.signin',
+  'ngBoilerplate.users',
+  'ngBoilerplate.recovery',
   'ui.state',
   'ui.route'
 ])
