@@ -12,7 +12,8 @@ module.exports = function(app, passport, config){
     app.use('/vendor', express.static(config.deployPath + '/vendor'));
     app.use('/src', express.static(config.deployPath + '/src'));
     app.use('/assets', express.static(config.deployPath + '/assets'));
-    app.use('/', express.static(config.deployPath));
+    //app.use('/', express.static(config.deployPath));  // only if authenticated as this is our main index.html page!
+
     //If we get here then the request for a static file is invalid
     app.use('/vendor', function(req, res, next) {
       res.send(404); 

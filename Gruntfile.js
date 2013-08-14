@@ -25,6 +25,7 @@ module.exports = function ( grunt ) {
       atpl: [ 'src/app/**/*.tpl.html' ],
       ctpl: [ 'src/common/**/*.tpl.html' ],
       html: [ 'src/index.html' ],
+      staticHtml: [ 'src/static/*.html' ],
       less: 'src/less/main.less'
       //server: [ './server.js, routes/**/*.js', 'config/*.js' ]
     },
@@ -71,6 +72,17 @@ module.exports = function ( grunt ) {
             dest: '<%= buildDir %>/assets/',
             cwd: 'src/assets',
             expand: true
+          }
+        ]
+      },
+      buildStaticHtml: {
+        files: [
+          {
+            src: [ '<%= appFiles.staticHtml %>' ],
+            dest: '<%= buildDir %>/static/',
+            cwd: '.',
+            expand: true,
+            flatten: true
           }
         ]
       },
@@ -276,7 +288,12 @@ module.exports = function ( grunt ) {
         livereload: true
       },
       server: {
-        files: [ 'routes/**/*.js', 'config/*.js' ]
+        files: [ 'server.js', 'routes/**/*.js', 'config/*.js' ],
+        tasks: [ 'copy:buildAssets', 'express:dev' ]
+      },
+      staticHtml: {
+        files: [ '<%= appFiles.staticHtml %>' ],
+        tasks: [ 'copy:buildStaticHtml' ]
       },
       /**
        * When the Gruntfile changes, we just want to lint it. In fact, when
@@ -466,6 +483,7 @@ module.exports = function ( grunt ) {
     'copy:buildAssets',
     'copy:buildAppjs',
     'copy:buildVendorjs',
+    'copy:buildStaticHtml',
     'index:build' //, 'karmaconfig' , 'karma:continuous'
   ]);
 

@@ -1,4 +1,20 @@
-<section ng-controller="SigninCtrl">
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <title>XXXX</title>
+
+ 
+
+  <!--[if IE 7>
+  <link rel="stylesheet" href="assets/font-awesome-ie7.min.css />
+  <![endif]-->
+  
+</head>
+<body>
+  <section>
   <header>
     <h2>Login</h2>
   </header>
@@ -23,7 +39,7 @@
         <h4>Or create a new one.</h4>
       </header>
       <div class="password-form form-horizontal">
-        <form nonvalidate name="form" class="form">
+        <form class="form">
           <fieldset class="control-group">
             <label for="email" class="control-label"><strong>Email</strong></label>
             <div class="controls">
@@ -37,7 +53,7 @@
             </div>
           </fieldset>
           <fieldset class="form-actions">
-            <input type="submit" ng-click="Login(User, Password)" ng-disabled="form.$invalid || WaitText" value="{{WaitText || 'Login'}}" class="btn btn-success"/>
+            <input type="submit" class="btn btn-success"/>
           </fieldset>
           <fieldset class="control-group">
             <div class="controls">
@@ -49,3 +65,5 @@
     </div>
   </div>
 </section>
+</body>
+</html>

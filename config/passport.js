@@ -38,14 +38,17 @@ module.exports = function(passport, config){
   }
   // TEMP END
 
-  passport.use(new LocalStrategy(function(email, password, done) {
-      // TEMP START
-      findByUsername(email, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (user.password != password) { return done(null, false); }
-        return done(null, user);
-      });
+  passport.use(
+    new LocalStrategy(
+      function(email, password, done) {
+        // TEMP START
+        findByUsername(email, function(err, user) {
+          return done(null, false);
+          // if (err) { return done(err); }
+          // if (!user) { return done(null, false); }
+          // if (user.password != password) { return done(null, false); }
+          // return done(null, user);
+        });
 
       // User.findOne({ email: email }, function (err, user) {
       //   if (err) { return done(err) }
@@ -61,6 +64,10 @@ module.exports = function(passport, config){
     }
   ));
 
+// this. function ensureAuthenticated(req, res, next) {
+//   if (req.isAuthenticated()) { return next(); }
+//   res.redirect('/signin')
+// }
   // passport.use(new LocalStrategy(
   //   function(username, password, done) {
   //     // Find the user by username.  If there is no user with the given
