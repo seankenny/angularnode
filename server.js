@@ -6,10 +6,10 @@ var app = require('express')()
   , config = require('./config/config')[env];
 
 // bootstrap passport config
-require('./config/passport')(passport, config)
+require('./config/passport')(passport, config);
 
 // bootstrap express config
-require('./config/express')(app, passport, config)
+require('./config/express')(app, passport, config);
 
 // Bootstrap routes
 require('./routes/index')(app, passport, io, config);
@@ -19,6 +19,6 @@ server.listen(config.port, function(){
 });
 
 // bootstrap socket.io config
-require('./config/socketio')(io, config)
+require('./config/socketio')(io, config);
 
 module.exports = app;

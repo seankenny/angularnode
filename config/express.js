@@ -48,6 +48,8 @@ module.exports = function(app, passport, config){
 
     // app.use(csrf.checkCsrf);
     // app.use(csrf.addCsrf);
+     app.use(app.router);
+    
   });
 
   // development only

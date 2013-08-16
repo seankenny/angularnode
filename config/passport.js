@@ -41,13 +41,16 @@ module.exports = function(passport, config){
   passport.use(
     new LocalStrategy(
       function(email, password, done) {
+        console.log('******************************');
+        console.log(email);
+        console.log(password);
         // TEMP START
         findByUsername(email, function(err, user) {
-          return done(null, false);
-          // if (err) { return done(err); }
-          // if (!user) { return done(null, false); }
-          // if (user.password != password) { return done(null, false); }
-          // return done(null, user);
+          console.log('******************************');
+          if (err) { return done(err); }
+          if (!user) { return done(null, false); }
+          if (user.password != password) { return done(null, false); }
+          return done(null, user);
         });
 
       // User.findOne({ email: email }, function (err, user) {
@@ -63,44 +66,4 @@ module.exports = function(passport, config){
       // TEMP END
     }
   ));
-
-// this. function ensureAuthenticated(req, res, next) {
-//   if (req.isAuthenticated()) { return next(); }
-//   res.redirect('/signin')
-// }
-  // passport.use(new LocalStrategy(
-  //   function(username, password, done) {
-  //     // Find the user by username.  If there is no user with the given
-  //     // username, or the password is not correct, set the user to `false` to
-  //     // indicate failure and set a flash message.  Otherwise, return the
-  //     // authenticated `user`.
-  //     findByUsername(username, function(err, user) {
-  //       if (err) { return done(err); }
-  //       if (!user) { return done(null, false); }
-  //       if (user.password != password) { return done(null, false); }
-  //       return done(null, user);
-  //     });
-  //   }
-  // ));
-
-// passport.use(new TwitterStrategy({
-//         consumerKey: 'OoS4aVvIuCrcjJps0VUw',
-//         consumerSecret: 'VITr9mZvbb2OVge02vNAzSgHvSg6LGkHnZMad4vUJH0',
-//         callbackURL: "http://sisu.io/auth/twitter/callback"
-//     },
-//     function(token, tokenSecret, profile, done) {
-//       done(null, true);
-//       // findByUsername(username, function(err, user) {
-//       //     if (err) { return done(err); }
-//       //     if (!user) { return done(null, false); }
-//       //     if (user.password != password) { return done(null, false); }
-//       //     return done(null, user);
-//       //   });
-
-//       // console.log('callback! ->' + profile.id);
-//       //   var user = users[profile.id] || 
-//       //              (users[profile.id] = { id: profile.id, name: profile.username });
-//       //   done(null, true);//user);
-//     }
-// ));
 };
