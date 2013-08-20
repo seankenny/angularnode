@@ -4,10 +4,11 @@ var mongoUri = process.env.MONGOLAB_URI ||
                process.env.MONGOHQ_URL || 
                'mongodb://localhost:27017/mydb';
 
-var db = mongo.db(mongoUri);
+var db = mongo.db(mongoUri, {safe: true});
 
 module.exports = {
-  staff: db.collection('staff'),
+  accounts: db.collection('accounts'),
+  users: db.collection('users'),
   toObjectId: function(_id){ return BSON.ObjectID(_id); },
   toDate: function(stringDate){ return new Date(stringDate); },
   dateRange: function(fromDate, toDate){ 

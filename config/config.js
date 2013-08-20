@@ -1,6 +1,11 @@
 var path = require('path')
   , appRoot = path.normalize(__dirname + '/../');
 
+var session = {
+  key: 'myapp',
+  secret: 'skZ!@@VVMja6*KJlFksl%j6m'
+};
+
 module.exports = {
   development: {
     db: 'mongodb://localhost:27017/appoyntmedb',
@@ -8,7 +13,8 @@ module.exports = {
     session: {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
-    deployPath: appRoot + 'build'
+    deployPath: appRoot + 'build',
+    appRoot: appRoot
   },
   production: {
     db: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL,
@@ -17,6 +23,7 @@ module.exports = {
       secret: 'skZ!@@VVMja6*KJlFksl%j6m'
     },
     deployPath: appRoot + 'bin',
-    longPolling: true
+    longPolling: true,
+    appRoot: appRoot
   }
 }

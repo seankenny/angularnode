@@ -1,69 +1,78 @@
-var LocalStrategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy,
+    users = require('../routes/model').users,
+    accounts = require('../routes/model').accounts,
+    bcrypt = require('bcrypt'),
+    SALT_WORK_FACTOR = 10;
 
 module.exports = function(passport, config){
 
   passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user._id);
   });
 
   passport.deserializeUser(function(id, done) {
-    findById(id, function (err, user) {
-      done(err, user);
-    });
+    users.findById(id, done);
   });
 
-  // TEMP START
-  var users = [
-      { id: 1, password: 'jill', username: 'jill@appoynt.me' }
-    , { id: 2, password: 'jack', username: 'jack@appoynt.me' }  
-  ];
-
-  function findById(id, fn) {
-    var idx = id - 1;
-    if (users[idx]) {
-      fn(null, users[idx]);
-    } else {
-      fn(new Error('User ' + id + ' does not exist'));
-    }
+  var findByEmail = function(email, done) {
+    users.findOne({email: email}, function(err, user) {
+      if(err || user){
+        return done(err, user);
+      } 
+      return done(null, null);
+    });
   }
 
-  function findByUsername(username, fn) {
-    for (var i = 0, len = users.length; i < len; i++) {
-      var user = users[i];
-      if (user.username === username) {
-        return fn(null, user);
-      }
-    }
-    return fn(null, null);
-  }
-  // TEMP END
+  passport.createAccount = function(signup, done) {
+    if (signup.password !== signup.passwordRepeat){
+      return done(new Error("Passwords must match"));
+    } 
+
+    var account = { name: signup.organisationName };
+    var user = { 
+      email: signup.email,
+      admin: true
+    };
+
+    // generate a salt & hash
+    var salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
+    user.password = bcrypt.hashSync(signup.password, salt);
+
+    accounts.ensureIndex({ name:1 }, { unique:true }, function (err, index) {});
+    accounts.insert(account, function(err, records) {
+      if(err) {
+          return done(err);
+      } 
+      user.accountId = records[0]._id;
+      users.insert(user, function(err, records) {
+        if(err) {
+            done(err);
+        } else {
+            done(null, records[0]);
+        }
+      });
+    });
+  };
 
   passport.use(
-    new LocalStrategy(
+    new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'password'
+      },
       function(email, password, done) {
-        console.log('******************************');
-        console.log(email);
-        console.log(password);
-        // TEMP START
-        findByUsername(email, function(err, user) {
-          console.log('******************************');
-          if (err) { return done(err); }
-          if (!user) { return done(null, false); }
-          if (user.password != password) { return done(null, false); }
-          return done(null, user);
+        console.log('here');
+        findByEmail(email, function(err, user) {
+          if (err) {
+            return done(err); // system exception
+          }
+          if (!user) {
+            return done(null, false, { invalidCredentials: true }); 
+          }
+          if(bcrypt.compareSync(user.password, password)) {
+            return done(null, false, { invalidCredentials: true }); 
+          }
+          return done(null, user);  // valid
         });
-
-      // User.findOne({ email: email }, function (err, user) {
-      //   if (err) { return done(err) }
-      //   if (!user) {
-      //     return done(null, false, { message: 'Unknown user' })
-      //   }
-      //   if (!user.authenticate(password)) {
-      //     return done(null, false, { message: 'Invalid password' })
-      //   }
-      //   return done(null, user)
-      // })
-      // TEMP END
     }
   ));
 };

@@ -1,0 +1,40 @@
+!!! 5
+//if lt IE 7
+  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
+//if IE 7
+  <html class="no-js lt-ie9 lt-ie8" lang="en">
+//if IE 8
+  <html class="no-js lt-ie9" lang="en">
+<!--[if gt IE 8]><!-->
+html(class='no-js', lang='en')
+  <!--<![endif]-->
+  head
+    title XXXX
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='/assets/angular-boilerplate-0.0.7.css', rel='stylesheet', media='screen')
+    //if IE 7
+      link(rel='stylesheet', href='href', assets='assets', font-awesome-ie7.min.css='font-awesome-ie7.min.css')
+  body
+    .container
+      //
+        COMMON HEADER 
+      h1 Sign In
+      p Welcome back.
+      .row
+        .col-4.col-offset-4
+          form(role='form', action='action', login='login', method='post')
+            .form-group
+              label(for='email') Email
+              input#email.form-control(type='email', name='email', placeholder='Enter email.')
+            .form-group
+              label(for='password') Password
+              input#password.form-control(type='password', name='password', placeholder='Password')
+            button.btn.btn-default(type='submit') Submit
+          p
+            | Not registered yet?
+            a(href='signup') Register now
+            | to get started
+          p
+            | Forgot your password?
+            a(href='password/reset') Reset it

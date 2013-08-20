@@ -1,6 +1,7 @@
 var express = require('express')
   , path = require('path')
-  , csrf = require('./csrf')();
+  , csrf = require('./csrf')()
+  , flash = require('connect-flash');
 
 module.exports = function(app, passport, config){
 
@@ -24,7 +25,9 @@ module.exports = function(app, passport, config){
     app.use('/assets', function(req, res, next) {
       res.send(404);
     });
-
+console.log(config.appRoot)
+    app.set('views', config.appRoot + '/views');
+    app.set('view engine', 'jade');
     app.use(express.logger());
 
     app.use(express.bodyParser());
@@ -48,7 +51,8 @@ module.exports = function(app, passport, config){
 
     // app.use(csrf.checkCsrf);
     // app.use(csrf.addCsrf);
-     app.use(app.router);
+    app.use(flash());
+    app.use(app.router);
     
   });
 
