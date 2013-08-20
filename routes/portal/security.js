@@ -24,7 +24,7 @@ module.exports = function(app, passport, config){
         if (err) {
           return res.redirect('/signin'); 
         }
-        return res.redirect('/');
+        return res.redirect('/home');
       });
     })(req, res, next);
   });
@@ -42,7 +42,7 @@ module.exports = function(app, passport, config){
           return res.redirect('/signup');
         };
         passport.authenticate('local')(req, res, function () {
-                res.redirect('/');
+                res.redirect('/home');
         });
     });
   });
@@ -53,10 +53,11 @@ module.exports = function(app, passport, config){
   });
 
   app.get('/password/reset', function(req, res){
-    res.sendfile('static/passwordreset.html', { root: config.deployPath });
+    res.render('passwordreset', { message: req.flash('info')[0] });
   });
 
   app.post('/password/reset', function(req, res){
-    res.sendfile('static/passwordreset.html', { root: config.deployPath });
+    req.flash('info', 'Email sent');
+    res.redirect('/password/reset');
   });
 }

@@ -53,7 +53,7 @@ module.exports = function(passport, config){
     accounts.ensureIndex({ name:1 }, { unique:true }, function (err, index) {});
     accounts.insert(account, function(err, records) {
       if(err) {
-        return done({message: 'There is already an organisation with this name.  Please choose another.'});
+        return done('There is already an organisation with this name.  Please choose another.');
       } 
       user.accountId = records[0]._id;
       users.insert(user, function(err, records) {

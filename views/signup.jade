@@ -1,54 +1,37 @@
-!!! 5
-//if lt IE 7
-  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
-//if IE 7
-  <html class="no-js lt-ie9 lt-ie8" lang="en">
-//if IE 8
-  <html class="no-js lt-ie9" lang="en">
-<!--[if gt IE 8]><!-->
-html(class='no-js', lang='en')
-  <!--<![endif]-->
-  head
-    title XXXX
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(href='/assets/angular-boilerplate-0.0.7.css', rel='stylesheet', media='screen')
-    //if IE 7
-      link(rel='stylesheet', href='href', assets='assets', font-awesome-ie7.min.css='font-awesome-ie7.min.css')
-  body
-    .container
-      h1 Sign Up
-      p Enter your details to get started.
-        .row
-          .col-4.col-offset-4
-            form(role='form', action='signup', method='post')
-              .form-group
-                if(error && typeof error.message === 'string')
-                  ul.errorlist
-                    li= error.message
+extends layout
+  
+block content
+  h1 Sign Up
+  p Enter your details to get started.
+    .row
+      .col-4.col-offset-4
+        form(role='form', action='signup', method='post')
+          .form-group
+            if(error && typeof error.message === 'string')
+              ul.errorlist
+                li= error.message
 
-                label(for='email') Email
-                if(error && error.form && error.form.email === '')
-                  ul.errorlist
-                    li Required field.
-                input#email.form-control(type='email', name='email', placeholder='Enter email')
-              .form-group
-                label(for='password') Password
-                if(error && error.form && error.form.password === '')
-                  ul.errorlist
-                    li Required field.
-                input#password.form-control(type='password', name='password', placeholder='Password')
-              .form-group
-                label(for='passwordRepeat') Password (again)
-                if(error && error.form && error.form.passwordRepeat === '')
-                  ul.errorlist
-                    li Required field.
-                input#passwordRepeat.form-control(type='password', name='passwordRepeat', placeholder='Password')
-              .form-group
-                label(for='organisationName') Organisation Name
-                if(error && error.form && error.form.organisationName === '')
-                  ul.errorlist
-                    li Required field.
-                input#organisationName.form-control(type='text', name='organisationName', placeholder='Organisation Name')
-              button.btn.btn-default(type='submit') Submit
-      p= JSON.stringify(error)
+            label(for='email') Email
+            if(error && error.email === '')
+              ul.errorlist
+                li Required field.
+            input#email.form-control(type='email', name='email', placeholder='Enter email', required, value=error ? error.email : '')
+          .form-group
+            label(for='password') Password
+            if(error && error.password === '')
+              ul.errorlist
+                li Required field.
+            input#password.form-control(type='password', name='password', placeholder='Password', required)
+          .form-group
+            label(for='passwordRepeat') Password (again)
+            if(error && error.passwordRepeat === '')
+              ul.errorlist
+                li Required field.
+            input#passwordRepeat.form-control(type='password', name='passwordRepeat', placeholder='Password', required)
+          .form-group
+            label(for='organisationName') Organisation Name
+            if(error && error.organisationName === '')
+              ul.errorlist
+                li Required field.
+            input#organisationName.form-control(type='text', name='organisationName', placeholder='Organisation Name', required, value=error ? error.organisationName : '')
+          button.btn.btn-default(type='submit') Submit
