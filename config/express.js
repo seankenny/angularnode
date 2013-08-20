@@ -25,7 +25,7 @@ module.exports = function(app, passport, config){
     app.use('/assets', function(req, res, next) {
       res.send(404);
     });
-console.log(config.appRoot)
+    
     app.set('views', config.appRoot + '/views');
     app.set('view engine', 'jade');
     app.use(express.logger());

@@ -24,8 +24,20 @@ module.exports = function(passport, config){
   }
 
   passport.createAccount = function(signup, done) {
+
+    if (signup.email === '' ||
+        signup.password === '' ||
+        signup.passwordRepeat === '' ||
+        signup.organisationName === ''){
+      return done({});
+    }
+
     if (signup.password !== signup.passwordRepeat){
-      return done(new Error("Passwords must match"));
+      return done('Passwords must match');
+    } 
+
+    if (signup.password.length < 8){
+      return done('Passwords must be longer than 8');
     } 
 
     var account = { name: signup.organisationName };
@@ -41,7 +53,7 @@ module.exports = function(passport, config){
     accounts.ensureIndex({ name:1 }, { unique:true }, function (err, index) {});
     accounts.insert(account, function(err, records) {
       if(err) {
-          return done(err);
+        return done({message: 'There is already an organisation with this name.  Please choose another.'});
       } 
       user.accountId = records[0]._id;
       users.insert(user, function(err, records) {
