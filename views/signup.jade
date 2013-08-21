@@ -35,3 +35,4 @@ block content
                 li Required field.
             input#organisationName.form-control(type='text', name='organisationName', placeholder='Organisation Name', required, value=error ? error.organisationName : '')
           button.btn.btn-default(type='submit') Submit
+          input(type='hidden', name='_csrf', value="#{csrftoken}")

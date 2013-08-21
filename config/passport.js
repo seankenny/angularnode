@@ -1,6 +1,6 @@
 var LocalStrategy = require('passport-local').Strategy,
-    users = require('../routes/model').users,
-    accounts = require('../routes/model').accounts,
+    users = require('../models/model').users,
+    accounts = require('../models/model').accounts,
     bcrypt = require('bcrypt'),
     SALT_WORK_FACTOR = 10;
 

@@ -3,7 +3,8 @@ var path = require('path')
 
 var session = {
   key: 'myapp',
-  secret: 'skZ!@@VVMja6*KJlFksl%j6m'
+  secret: 'skZ!@@VVMja6*KJlFksl%j6m',
+  //cookie: {httpOnly: true, secure: true}  // cookies over HTTPS only
 };
 
 module.exports = {

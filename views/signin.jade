@@ -23,6 +23,7 @@ block content
               li Required field.
           input#password.form-control(type='password', name='password', placeholder='Password')
         button.btn.btn-default(type='submit') Submit
+        input(type='hidden', name='_csrf', value="#{csrftoken}")
       p
         | Not registered yet?  
         a(href='signup') Register now 
