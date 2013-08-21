@@ -14,8 +14,11 @@ require('./config/passport')(passport, config);
 // bootstrap express config
 require('./config/express')(app, passport, config);
 
+// Bootstrap routes
+require('./config/routes')(app, passport, config);
+
 // Bootstrap controllers
-require('./controllers/index')(app, passport, io, config);
+//require('./controllers/index')(app, passport, io, config);
 
 server.listen(config.port, function(){
   console.log('Express server listening on port ' + config.port);

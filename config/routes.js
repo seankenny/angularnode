@@ -9,93 +9,65 @@
  * Controllers
  */
 
-var users = require('../controllers/users')
+var users = require('../controllers/portal/users')
   //, articles = require('../controllers/articles')
-  , auth = require('./middlewares/authorization');
+  //, auth = require('./middlewares/authorization');
 
 /**
  * Route middlewares
  */
 
-var articleAuth = [auth.requiresLogin, auth.article.hasAuthorization]
+//var articleAuth = [auth.requiresLogin, auth.article.hasAuthorization]
 
 /**
  * Expose routes
  */
 
-module.exports = function (app, passport) {
+module.exports = function (app, passport, config) {
 
   // user routes
-  app.get('/login', users.login)
-  app.get('/signup', users.signup)
-  app.get('/logout', users.logout)
-  app.post('/users', users.create)
-  app.post('/users/session',
+  app.get('/signin', users.signin)
+  app.post('/signin',
     passport.authenticate('local', {
-      failureRedirect: '/login',
+      failureRedirect: '/signin',
       failureFlash: 'Invalid email or password.'
     }), users.session)
-  app.get('/users/:userId', users.show)
-  app.get('/auth/facebook',
-    passport.authenticate('facebook', {
-      scope: [ 'email', 'user_about_me'],
-      failureRedirect: '/login'
-    }), users.signin)
-  app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
-      failureRedirect: '/login'
-    }), users.authCallback)
-  app.get('/auth/github',
-    passport.authenticate('github', {
-      failureRedirect: '/login'
-    }), users.signin)
-  app.get('/auth/github/callback',
-    passport.authenticate('github', {
-      failureRedirect: '/login'
-    }), users.authCallback)
-  app.get('/auth/twitter',
-    passport.authenticate('twitter', {
-      failureRedirect: '/login'
-    }), users.signin)
-  app.get('/auth/twitter/callback',
-    passport.authenticate('twitter', {
-      failureRedirect: '/login'
-    }), users.authCallback)
-  app.get('/auth/google',
-    passport.authenticate('google', {
-      failureRedirect: '/login',
-      scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-      ]
-    }), users.signin)
-  app.get('/auth/google/callback',
-    passport.authenticate('google', {
-      failureRedirect: '/login'
-    }), users.authCallback)
-
-  app.param('userId', users.user)
+  app.get('/signup', users.signup)
+  app.post('/signup', users.register)
+  
+  app.get('/signout', users.signout)
+  
+  //app.post('/users', users.create)
+  //app.get('/users/:userId', users.show)
+  
+  //app.param('userId', users.user)
 
   // article routes
-  app.get('/articles', articles.index)
-  app.get('/articles/new', auth.requiresLogin, articles.new)
-  app.post('/articles', auth.requiresLogin, articles.create)
-  app.get('/articles/:id', articles.show)
-  app.get('/articles/:id/edit', articleAuth, articles.edit)
-  app.put('/articles/:id', articleAuth, articles.update)
-  app.del('/articles/:id', articleAuth, articles.destroy)
+  // app.get('/articles', articles.index)
+  // app.get('/articles/new', auth.requiresLogin, articles.new)
+  // app.post('/articles', auth.requiresLogin, articles.create)
+  // app.get('/articles/:id', articles.show)
+  // app.get('/articles/:id/edit', articleAuth, articles.edit)
+  // app.put('/articles/:id', articleAuth, articles.update)
+  // app.del('/articles/:id', articleAuth, articles.destroy)
 
-  app.param('id', articles.load)
+  //app.param('id', articles.load)
 
   // home route
-  app.get('/', articles.index)
+  //app.get('/', articles.index)
 
-  // comment routes
-  var comments = require('../app/controllers/comments')
-  app.post('/articles/:id/comments', auth.requiresLogin, comments.create)
+  app.get('/about', function(req, res){
+    res.sendfile('about.html', { root: config.appRoot + '/views' });  
+  });
 
-  // tag routes
-  var tags = require('../app/controllers/tags')
-  app.get('/tags/:tag', tags.index)
+  // This route deals enables HTML5Mode by forwarding missing files to the index.html
+  app.all('/*', function(req, res) {
+    if (req.isAuthenticated()){
+      // Just send the index.html for other files to support HTML5Mode
+      res.sendfile('index.html', { root: config.deployPath });
+    } else {
+      res.sendfile('index.html', { root: config.appRoot + '/views' });  
+    }
+  });
 
 }

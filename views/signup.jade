@@ -1,4 +1,4 @@
-extends layout
+extends layouts/default
   
 block content
   h1 Sign Up
@@ -7,32 +7,20 @@ block content
       .col-4.col-offset-4
         form(role='form', action='signup', method='post')
           .form-group
-            if(error && typeof error.message === 'string')
-              ul.errorlist
-                li= error.message
-
+            label(for='name') Name
+            input#name.form-control(type='name', name='name', placeholder='Enter name', required, value=user.name)
+          .form-group
             label(for='email') Email
-            if(error && error.email === '')
-              ul.errorlist
-                li Required field.
-            input#email.form-control(type='email', name='email', placeholder='Enter email', required, value=error ? error.email : '')
+            input#email.form-control(type='email', name='email', placeholder='Enter email', required, value=user.email)
           .form-group
             label(for='password') Password
-            if(error && error.password === '')
-              ul.errorlist
-                li Required field.
             input#password.form-control(type='password', name='password', placeholder='Password', required)
-          .form-group
-            label(for='passwordRepeat') Password (again)
-            if(error && error.passwordRepeat === '')
-              ul.errorlist
-                li Required field.
-            input#passwordRepeat.form-control(type='password', name='passwordRepeat', placeholder='Password', required)
+          //- .form-group
+          //-   label(for='passwordRepeat') Password (again)
+          //-   input#passwordRepeat.form-control(type='password', name='passwordRepeat', placeholder='Password', required)
           .form-group
             label(for='organisationName') Organisation Name
-            if(error && error.organisationName === '')
-              ul.errorlist
-                li Required field.
-            input#organisationName.form-control(type='text', name='organisationName', placeholder='Organisation Name', required, value=error ? error.organisationName : '')
+            input#organisationName.form-control(type='text', name='organisationName', placeholder='Organisation Name', required)
+
           button.btn.btn-default(type='submit') Submit
           input(type='hidden', name='_csrf', value="#{csrftoken}")
