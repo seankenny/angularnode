@@ -36,6 +36,9 @@ module.exports = function (app, passport, config) {
   app.post('/signup', users.register)
   
   app.get('/signout', users.signout)
+
+  app.get('/password/reset', users.getresetpassword)
+  app.post('/password/reset', users.resetpassword)
   
   //app.post('/users', users.create)
   //app.get('/users/:userId', users.show)
