@@ -24,7 +24,7 @@ module.exports = function(app, passport, config){
       res.send(404);
     });
 
-    app.set('views', config.appRoot + '/views');
+    app.set('views', config.appRoot + '/app/views');
     app.set('view engine', 'jade');
 
     app.use(express.bodyParser());

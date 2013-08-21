@@ -9,7 +9,7 @@
  * Controllers
  */
 
-var users = require('../controllers/portal/users')
+var users = require('../app/controllers/portal/users')
   //, articles = require('../controllers/articles')
   //, auth = require('./middlewares/authorization');
 
@@ -57,7 +57,7 @@ module.exports = function (app, passport, config) {
   //app.get('/', articles.index)
 
   app.get('/about', function(req, res){
-    res.sendfile('about.html', { root: config.appRoot + '/views' });  
+    res.sendfile('about.html', { root: config.appRoot + '/app/views' });  
   });
 
   // This route deals enables HTML5Mode by forwarding missing files to the index.html
@@ -66,7 +66,7 @@ module.exports = function (app, passport, config) {
       // Just send the index.html for other files to support HTML5Mode
       res.sendfile('index.html', { root: config.deployPath });
     } else {
-      res.sendfile('index.html', { root: config.appRoot + '/views' });  
+      res.sendfile('index.html', { root: config.appRoot + '/app/views' });  
     }
   });
 

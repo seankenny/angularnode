@@ -3,7 +3,7 @@ var   mongoose = require('mongoose')
 
 module.exports = function(config){
   // Bootstrap models
-  var models_path = config.appRoot + '/models'
+  var models_path = config.appRoot + '/app/models'
 
   fs.readdirSync(models_path).forEach(function (file) {
     if (~file.indexOf('.js')){

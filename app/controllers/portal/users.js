@@ -1,8 +1,10 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
-  , utils = require('../../lib/utils')
+  , utils = require('../../../lib/utils')
   , nodemailer = require("nodemailer");
-    
+
+
+
 // Create a SMTP transport object
 var transport = nodemailer.createTransport("SMTP", {
   service: 'Gmail', // use well known service.
@@ -46,26 +48,13 @@ module.exports.signin = function(req, res){
     //res.render('signin', { error: req.flash('error')[0] });
   };
   
-module.exports.session = function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { 
-      return res.redirect('/signin'); 
-    }
-    if (!user) { 
-      var flash = { email: req.body.email, password: req.body.password };  
-      if (info.invalidCredentials){
-        flash.message = 'The username and password you specified are not valid.';
-      }
-      req.flash('error', flash);
-      return res.redirect('/signin'); 
-    }
-    req.logIn(user, function(err) {
-      if (err) {
-        return res.redirect('/signin'); 
-      }
-      return res.redirect('/home');
-    });
-  })(req, res, next);
+module.exports.session = function (req, res) {
+  if (req.session.returnTo) {
+    res.redirect(req.session.returnTo)
+    delete req.session.returnTo
+    return
+  }
+  res.redirect('/')
 };
 
 module.exports.signup = function(req, res){
@@ -94,17 +83,6 @@ module.exports.register = function(req, res, next){
       return res.redirect('/')
     })
   });
-
-  // passport.createAccount(account, function (err, user) {
-  //     if (err){
-        
-  //       req.flash('error', _.extend(req.body, _.extend(req.body, { message: err})));
-  //       return res.redirect('/signup');
-  //     };
-  //     passport.authenticate('local')(req, res, function () {
-  //             res.redirect('/home');
-  //     });
-  // });
 };
 
 module.exports.signout = function(req, res){
